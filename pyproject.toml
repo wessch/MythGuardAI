@@ -1,0 +1,94 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mythguardai"
+version = "0.1.0"
+description = "Semantic Application Security for the AI Era. Detects hidden capability drift in code by comparing declared intent vs. reachable capability."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+    { name = "Wesley Schouw", email = "info@mythguardai.com" },
+]
+keywords = [
+    "security",
+    "static-analysis",
+    "semantic-analysis",
+    "capability-drift",
+    "ai-safety",
+    "code-audit",
+    "sast",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Security",
+    "Topic :: Software Development :: Quality Assurance",
+    "Topic :: Software Development :: Testing",
+    "Typing :: Typed",
+]
+
+dependencies = [
+    "click>=8.0",
+    "rich>=13.0",
+    "pyyaml>=6.0",
+    "networkx>=3.0",
+]
+
+[project.optional-dependencies]
+ast-grep = [
+    "ast-grep-python>=0.3.0",
+]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "mypy>=1.8",
+    "ruff>=0.4",
+]
+
+[project.scripts]
+mythguardai = "mythguardai.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/wessch/MythGuardAI"
+Documentation = "https://github.com/wessch/MythGuardAI#readme"
+Repository = "https://github.com/wessch/MythGuardAI"
+Issues = "https://github.com/wessch/MythGuardAI/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mythguardai"]
+
+[tool.pytest.ini_options]
+testpaths = ["src/tests"]
+addopts = "-v --tb=short"
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.ruff]
+target-version = "py310"
+line-length = 88
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "N",    # pep8-naming
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "RUF",  # ruff-specific rules
+]

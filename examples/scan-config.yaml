@@ -1,0 +1,84 @@
+# MythGuardAI Scan Configuration
+# https://github.com/wessch/MythGuardAI
+
+# Minimum severity level to report.
+# Options: LOW, MEDIUM, HIGH, CRITICAL
+# Default: LOW (report all findings)
+severity_threshold: MEDIUM
+
+# Whether to exit with a non-zero code when CRITICAL deviations are found.
+# Set to false for advisory mode (report but don't block CI).
+# Default: true
+fail_on_critical: true
+
+# Whether to include UNREACHABLE deviations in the report.
+# UNREACHABLE means the capability is in dead code with no control-flow
+# path reaching it from the entry point.
+# Default: false
+include_unreachable: false
+
+# Directories containing custom policy modules.
+# Each Python file in the directory should define one or more Policy subclasses.
+# Files starting with _ are skipped.
+policy_dirs:
+  - ./custom_policies
+
+# Languages to analyze. Empty set means all supported languages.
+# Supported: python, javascript
+# Default: [] (all)
+languages: []
+
+# Default output format for reports.
+# Options: json, markdown, sarif
+# Default: json
+output_format: json
+
+# File to write results to. null means stdout.
+# Default: null
+output_path: null
+
+# Directory names to skip during path scans.
+# These are matched against the directory name, not the full path.
+ignored_dirs:
+  - __pycache__
+  - .git
+  - .hg
+  - .svn
+  - node_modules
+  - .tox
+  - .mypy_cache
+  - .pytest_cache
+  - .venv
+  - venv
+  - .env
+  - dist
+  - build
+  - .eggs
+  - vendor
+
+# File glob patterns to skip during path scans.
+ignored_files:
+  - "*.pyc"
+  - "*.pyo"
+  - "*.so"
+  - "*.dll"
+  - "*.dylib"
+  - "*.egg"
+  - "*.whl"
+
+# File extension to language mapping.
+# Modify this to add support for additional file extensions.
+language_map:
+  .py: python
+  .pyw: python
+  .js: javascript
+  .jsx: javascript
+  .ts: javascript
+  .tsx: javascript
+  .mjs: javascript
+  .cjs: javascript
+
+# Maximum file size to scan, in megabytes.
+# Files larger than this are skipped.
+# Default: 10.0
+max_file_size_mb: 10.0

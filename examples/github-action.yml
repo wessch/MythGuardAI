@@ -1,0 +1,73 @@
+name: MythGuardAI Security Scan
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install MythGuardAI
+        run: |
+          pip install mythguardai
+          mythguardai --version
+
+      - name: Run MythGuardAI scan
+        run: |
+          mythguardai scan ./src \
+            --format sarif \
+            --output mythguardai-results.sarif \
+            --severity-threshold MEDIUM \
+            --config ./scan-config.yaml
+
+      - name: Upload SARIF results to GitHub Code Scanning
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: mythguardai-results.sarif
+          category: mythguardai
+
+      - name: Generate Markdown report
+        if: always()
+        run: |
+          mythguardai scan ./src \
+            --format markdown \
+            --output mythguardai-report.md \
+            --severity-threshold MEDIUM \
+            --config ./scan-config.yaml
+
+      - name: Upload scan report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mythguardai-report
+          path: |
+            mythguardai-results.sarif
+            mythguardai-report.md
+          retention-days: 30
+
+      - name: Check for critical deviations
+        run: |
+          # This step will fail the workflow if CRITICAL deviations are found
+          # The scanner returns exit code 1 when fail_on_critical is true
+          mythguardai scan ./src \
+            --format json \
+            --severity-threshold CRITICAL \
+            --config ./scan-config.yaml
